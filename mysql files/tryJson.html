@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trying jsons</title>
+    <script type="text/javascript" src="./richieste_json.js"></script>
+    <script type="text/javascript" src="./globalVar.js"></script>
+    <script>
+
+
+        document.addEventListener("DOMContentLoaded", ()=>{
+            var sessionID = "";
+            var sessionCookie = document.cookie.split(";");
+            var sessionIdcreated = false;
+
+
+            for(i=0; i<sessionCookie.length; i++){
+
+                let cookie = sessionCookie[i];
+                if(cookie.startsWith("sessionIDspysphare=")){
+                sessionID = cookie.substring("sessionIDspysphare".length+1);
+                sessionIdcreated = true;
+                break;
+                }
+
+            }
+
+            if(sessionIdcreated){
+                
+                var creaEventobtn = document.getElementById("creaEvento");
+                creaEventobtn.addEventListener("click", ()=>{
+                    getEventoData(sessionID);
+                });
+
+                var deleteEvbtn = document.getElementById("eliminaEvento");
+                deleteEvbtn.addEventListener("click", ()=>{
+                    deleteEvento(sessionID);
+                });
+
+                var modificaBtn = document.getElementById("modifica");
+                modificaBtn.addEventListener("click", ()=>{
+                    updateEvento(sessionID);
+                });
+            }
+
+            document.getElementById("cal").addEventListener("click", ()=>{
+                console.log(document.getElementById("date").value);
+                console.log(document.getElementById("time").value);
+            });
+
+           
+
+        });
+
+
+    </script>
+</head>
+<body>
+    <button id="creaEvento">crea evento</button><br><br>
+    <button id="eliminaEvento">delete evento</button><br><br>
+    <button id="modifica">modifica evento</button><br><br>
+    <input type="date" id="date"><br>
+    <input type="time" id="time">
+    <button id="cal">cal</button>
+</body>
+</html>

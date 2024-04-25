@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Homepage</title>
+	<script type="text/javascript" src="./globalVar.js"></script>
+	<script>
+		document.addEventListener("DOMContentLoaded", ()=>{
+			
+			
+			var params = new URLSearchParams(window.location.search);
+
+			var sessionID = params.get("sessionIDspysphare");
+			
+			if(sessionID == null){
+
+				// check if the cookie session id is created 
+				var sessionCookie = document.cookie.split(";");
+				var sessionIdcreated = false;
+				
+
+				for(i=0; i<sessionCookie.length; i++){
+
+					let cookie = sessionCookie[i];
+					if(cookie.startsWith("sessionIDspysphare=")){
+						sessionID = cookie.substring("sessionIDspysphare".length+1);
+						sessionIdcreated = true;
+						break;
+					}
+					
+				}
+
+				if(sessionIdcreated){
+					
+
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						if (this.readyState == 4 && this.status == 200) {
+						// Typical action to be performed when the document is ready:
+						var jsonResponse = JSON.parse(xhttp.responseText);
+						document.getElementById("demo").innerHTML = xhttp.responseText;
+
+						if(jsonResponse['nome'] == 'null' || jsonResponse['nome'] == null){
+							window.location.replace(loginPage);
+						}
+						}
+					};
+
+					xhttp.open("GET", sessionInfoServlet+"?sessionID="+sessionID, true);
+					xhttp.send();
+				}else{
+
+					
+					window.location.replace(loginPage);
+				}
+				
+				console.log(document.cookie.split(";"));
+			
+				
+			}else{
+				console.log("sending request")
+				// if the session id is provided
+
+
+	
+				
+					// Create a new XMLHttpRequest object
+					var xhttp = new XMLHttpRequest();
+					
+					// Define the URL and method for the request
+					var url = sessionInfoServlet+"?sessionID="+sessionID;
+					var method = "GET"; // or "GET" depending on your servlet endpoint
+					
+					// Open the request
+					xhttp.open(method, url, true);
+				
+					
+					xhttp.onreadystatechange = function() {
+						if (this.readyState == 4 && this.status == 200) {
+							// Request completed successfully
+							console.log("recieved");
+							console.log(xhttp.responseText);
+							var jsonResponse = "";
+							try{
+								jsonResponse = JSON.parse(xhttp.responseText);
+							}catch(e){
+								window.location.replace(loginPage);
+							}
+							
+							document.getElementById("demo").innerHTML = xhttp.responseText;
+
+							if(jsonResponse['nome'] == 'null' || jsonResponse['nome'] == null){
+								window.location.replace(loginPage);
+								
+							}else{
+								document.cookie = "sessionIDspysphare="+sessionID+";path=/";
+								window.location.replace(homePage);
+							}
+							}
+						};
+					
+					// Send the request (optional: include request body)
+					
+					xhttp.send();
+
+				
+				
+			}
+
+		});
+    </script>
+</head>
+  <body>
+
+	
+  <h1 id="demo">ERROR</h1>
+
+
+  </body>
+</html>
