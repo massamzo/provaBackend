@@ -42,12 +42,35 @@
                 modificaBtn.addEventListener("click", ()=>{
                     updateEvento(sessionID);
                 });
+
+                var partecipaBtn = document.getElementById("partecipa");
+                partecipaBtn.addEventListener("click", ()=>{
+                    iscriviEvento(sessionID);
+                });
+
+                var abbandona = document.getElementById("abbandona");
+                abbandona.addEventListener("click", ()=>{
+                    abbandonaEvento(sessionID);
+                });
+
+                var getMeseEventiBtn = document.getElementById("getMeseEventi");
+                getMeseEventiBtn.addEventListener("click", ()=>{
+                    getMeseEventi(sessionID);
+                });
+
+                var getDataEventiBtn = document.getElementById("getDataEventi");
+                getDataEventiBtn.addEventListener("click", ()=>{
+                    getEventiPerData(sessionID);
+                });
+
             }
 
             document.getElementById("cal").addEventListener("click", ()=>{
                 console.log(document.getElementById("date").value);
                 console.log(document.getElementById("time").value);
             });
+
+            
 
            
 
@@ -60,6 +83,10 @@
     <button id="creaEvento">crea evento</button><br><br>
     <button id="eliminaEvento">delete evento</button><br><br>
     <button id="modifica">modifica evento</button><br><br>
+    <button id="partecipa">partecipa evento</button><br><br>
+    <button id="abbandona">abandona evento</button><br><br>
+    <button id="getMeseEventi">get tornei in maggio</button><br><br>
+    <button id="getDataEventi">get tornei in data </button><br><br>
     <input type="date" id="date"><br>
     <input type="time" id="time">
     <button id="cal">cal</button>

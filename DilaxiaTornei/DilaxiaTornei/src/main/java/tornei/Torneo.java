@@ -4,8 +4,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import databasePack.Database;
 import databasePack.QueryManager;
@@ -13,6 +17,7 @@ import databasePack.User;
 import sessions.Sessionmanager;
 
 public class Torneo extends Database{
+	
 	
 	private String sessionID;
 	private String data;
@@ -68,6 +73,14 @@ public class Torneo extends Database{
 		qm = new QueryManager(conn);
 		
 		
+	}
+	
+	public Torneo(String sessionID) throws SQLException {
+		super();
+		
+		this.sessionID = sessionID;
+		conn = getConn();
+		qm = new QueryManager(conn);
 	}
 
 
@@ -372,6 +385,8 @@ public class Torneo extends Database{
 	
 	
 	
+	
+	
 	public void abbandonaTorneo(String email) throws SQLException {
 		
 		QueryManager.DELETE_PARTECIPAZIONE_STM.setString(1, email);
@@ -379,6 +394,187 @@ public class Torneo extends Database{
 		QueryManager.DELETE_PARTECIPAZIONE_STM.setString(3, this.dateTime);
 		
 		QueryManager.DELETE_PARTECIPAZIONE_STM.executeUpdate();
+	}
+	
+	
+	
+	private String getTorneoPerMeseEsterno(String mese, String anno) throws SQLException {
+
+		QueryManager.SELECT_SPECIFIC_TORNEO_MESE_STM.setString(1,mese);
+		QueryManager.SELECT_SPECIFIC_TORNEO_MESE_STM.setString(2,anno);
+		QueryManager.SELECT_SPECIFIC_TORNEO_MESE_STM.setBoolean(3,false); // devo vedere solo quelli esterni
+		
+		ResultSet rs = QueryManager.SELECT_SPECIFIC_TORNEO_MESE_STM.executeQuery();
+		
+		JsonObject jsonObject = new JsonObject();
+		
+		
+		ArrayList<String> dates = new ArrayList<>();
+		
+		while(rs.next()) {
+			
+			String date = rs.getString("data_torneo").split(" ")[0];
+			dates.add(date);
+		}
+		
+		String datesArray = new Gson().toJson(dates);
+		jsonObject.addProperty("dates", datesArray);
+		
+		return new Gson().toJson(jsonObject);
+	}
+	
+	
+	private String getAllTorneoPerMese(String mese, String anno) throws SQLException {
+		
+		QueryManager.SELECT_ALL_TORNEO_MESE_STM.setString(1,mese);
+		QueryManager.SELECT_ALL_TORNEO_MESE_STM.setString(2,anno);
+
+		ResultSet rs = QueryManager.SELECT_ALL_TORNEO_MESE_STM.executeQuery();
+		
+		JsonObject jsonObject = new JsonObject();
+		
+		
+		ArrayList<String> dates = new ArrayList<>();
+		
+		while(rs.next()) {
+			
+			String date = rs.getString("data_torneo").split(" ")[0];
+			dates.add(date);
+		}
+		
+		String datesArray = new Gson().toJson(dates);
+		jsonObject.addProperty("dates", datesArray);
+		
+		return new Gson().toJson(jsonObject);
+		
+	}
+	
+	
+	
+	
+	public String getTorneoByMonth(String mese,String anno) throws Exception {
+		
+		// get the type of user who is requesting the data
+		
+		User user = this.getUserKnowingID();
+		
+		// run different tasks based on the user
+		
+		if(user.getFlag().equals(user.getAvailable_flags().get("esterno"))) {
+			
+			// eventi da mandare se un utente è esterno
+			
+			return getTorneoPerMeseEsterno(mese,anno);
+			
+		}else {
+			
+			return getAllTorneoPerMese(mese,anno);
+			
+		}
+		
+		
+	}
+	
+	
+	
+	
+	private String getTorneiPerDataEsterno(String data,ArrayList<String> arrayPartecipanti) throws SQLException {
+
+		QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_SPECIFIC_STM.setString(1, data);
+		QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_SPECIFIC_STM.setBoolean(2, false);
+		
+		ResultSet rs = QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_SPECIFIC_STM.executeQuery();
+		
+		ArrayList<String> nomi = new ArrayList<>();
+		
+		while(rs.next()) {
+			
+			if(!arrayPartecipanti.contains(rs.getString("nome_torneo"))) {
+				nomi.add(rs.getString("nome_torneo"));
+			}
+			
+		}
+		
+		String nomiArray = new Gson().toJson(nomi);
+		
+		
+		return nomiArray;
+		
+	}
+	
+	
+	private String getTorneiPerDataAll(String data,ArrayList<String> arrayPartecipanti) throws SQLException {
+		
+		
+		QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_ALL_STM.setString(1, data);
+		
+		ResultSet rs = QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_ALL_STM.executeQuery();
+		
+		ArrayList<String> nomi = new ArrayList<>();
+		
+		while(rs.next()) {
+			
+			if(!arrayPartecipanti.contains(rs.getString("nome_torneo"))) {
+				nomi.add(rs.getString("nome_torneo"));
+			}
+			
+		}
+		
+		String nomiArray = new Gson().toJson(nomi);
+		
+		return nomiArray;
+		
+	}
+	
+	
+	
+	private ArrayList<String> getTorneiPartecipanti(String data, String email) throws SQLException {
+		
+		QueryManager.SELECT_TORNEI_PARTECIPANTI_STM.setString(1, data);
+		QueryManager.SELECT_TORNEI_PARTECIPANTI_STM.setString(2, email);
+		
+		ResultSet rs = QueryManager.SELECT_TORNEI_PARTECIPANTI_STM.executeQuery();
+		
+		ArrayList<String> nomi = new ArrayList<>();
+		
+		while(rs.next()) {
+			nomi.add(rs.getString("nome_torneo"));
+		}
+		
+		
+		
+		return nomi;
+		
+		
+	}
+	
+	
+	public String getTorneiByData(String data) throws Exception {  // NP = non partecipanti
+		
+		// get the type of user who is requesting the data
+		User user = this.getUserKnowingID();
+		
+		// get the tornei partecipanti dalla persona
+		JsonObject jsonObject = new JsonObject();
+		
+		ArrayList<String> arrayPartecipanti = getTorneiPartecipanti(data, user.getEmail());
+		
+		jsonObject.addProperty("partecipanti", new Gson().toJson(arrayPartecipanti)); // converto in json array
+				
+		if(user.getFlag().equals(user.getAvailable_flags().get("esterno"))) {
+			
+			// nomi da mandare se un utente è esterno (solo quelli esterni)
+			
+			jsonObject.addProperty("non_partecipanti",getTorneiPerDataEsterno(data, arrayPartecipanti));
+			
+		}else {
+			// altrimenti mando tutti
+			jsonObject.addProperty("non_partecipanti",getTorneiPerDataAll(data,arrayPartecipanti));
+			
+		}
+		
+		return new Gson().toJson(jsonObject);
+		
 	}
 	
 	public String getDateTime() {

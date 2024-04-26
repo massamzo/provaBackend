@@ -9,13 +9,141 @@ function aggiornaSideBar(torneiIscritti, torneiDisponibili) {
 }
 
 
+function getEventiPerData(sessionID){
+
+	var dati = {
+		"sessionId" : sessionID,
+		"type_req": "d",   // d = mando i dati per quella data e in risposta ottengo tutti gli eventi
+		"data" : "2024-10-12"
+	}
+
+
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+		// Typical action to be performed when the document is ready:
+		var risposta = xhttp.responseText;  
+
+
+
+			console.log(JSON.parse(risposta));
+		}
+	};
+	xhttp.open("POST", getTornei, true);
+	xhttp.send(JSON.stringify(dati));
+
+
+}
+
+function getMeseEventi(sessionID){
+
+	var dati = {
+		"sessionId" : sessionID,
+		"type_req": "m",   // m = mando i dati per quel mese
+		"mese" : "10",
+		"anno":"2024"
+	}
+
+
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+		// Typical action to be performed when the document is ready:
+		var risposta = xhttp.responseText;  
+
+
+
+			console.log(JSON.parse(risposta));
+		}
+	};
+	xhttp.open("POST", getTornei, true);
+	xhttp.send(JSON.stringify(dati));
+
+
+
+}
+
+
+
+function abbandonaEvento(sessionID){
+
+	
+		var dati = {
+			"sessionId" : sessionID,
+			"type_req": "d",
+			"data" : "2024-10-12",
+			"nome_evento" : "aldini",
+			"orario" : "21:25"
+		}
+	
+	
+	
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+			// Typical action to be performed when the document is ready:
+			var risposta = xhttp.responseText;  // sara true (evento eliminato) o (errori relativi all'eliminazione dell'evento)
+	
+			if(risposta == "true"){
+				
+				//richiama il metodo che costruisce sidebar
+	
+				
+			}
+	
+	
+				console.log(risposta);
+			}
+		};
+		xhttp.open("POST", partecipazioniServlet, true);
+		xhttp.send(JSON.stringify(dati));
+}
+	
+
+
+
+function iscriviEvento(sessionID){
+	
+	var dati = {
+        "sessionId" : sessionID,
+        "type_req": "i",
+        "data" : "2024-10-12",
+        "nome_evento" : "cricketTorneo",
+        "orario" : "21:25"
+    }
+
+
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        // Typical action to be performed when the document is ready:
+        var risposta = xhttp.responseText;  // sara true (evento eliminato) o (errori relativi all'eliminazione dell'evento)
+
+        if(risposta == "true"){
+            
+            //richiama il metodo che costruisce sidebar
+
+            
+        }
+
+
+            console.log(risposta);
+        }
+    };
+    xhttp.open("POST", partecipazioniServlet, true);
+    xhttp.send(JSON.stringify(dati));
+}
+
 function deleteEvento(sessionID){
 
     var dati = {
         "sessionId" : sessionID,
         "type_req": "d",
-        "data" : "2024-10-11",
-        "nome_evento" : "amico",
+        "data" : "2024-10-12",
+        "nome_evento" : "aldini",
         "orario" : "21:25"
     }
 
@@ -80,7 +208,7 @@ function updateEvento(sessionID){
     xhttp.send(JSON.stringify(dati));
 }
 
-function getEventoData(sessionID) {
+function getEventoData(sessionID) { // sostituito con createEvento
 		//calcolo data
 		//costruzione json da mandare al backend
 
@@ -88,14 +216,14 @@ function getEventoData(sessionID) {
 		var dati = {
 				"sessionId" : sessionID,
                 "type_req": "c",
-				"data" : "2024-10-11",
-				"nome_evento" : "amico",
+				"data" : "2024-10-19",
+				"nome_evento" : "keema",
 				"descrizione" : "ciao sto creando un evento ",  //luogo evento o un sport non in elenco
-				"orario" : "21:25",
-				"numero_partecipanti_max" : "10",
+				"orario" : "23:25",
+				"numero_partecipanti_max" : "4",
                 "eta_minima":"6",
                 "sport":"Hockey",
-                "tipo_evento" : "Crea interno"
+                "tipo_evento" : "Crea esterno"
 		}
 
         

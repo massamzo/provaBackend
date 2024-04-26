@@ -26,7 +26,7 @@ import tornei.Torneo;
 public class Partecipazioni extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	Redirections redirect = new Redirections();
-	private final String[] typesOfRequests = {"i","d","u"}; // i = iscriviti, d= abbandona
+	private final String[] typesOfRequests = {"i","d"}; // i = iscriviti, d= abbandona
        
     /**
      * @see HttpServlet#HttpServlet()

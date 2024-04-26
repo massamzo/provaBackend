@@ -122,6 +122,14 @@ public class User extends Database{
 	
 	
 	
+	public HashMap<String, String> getAvailable_flags() {
+		return available_flags;
+	}
+
+	public void setAvailable_flags(HashMap<String, String> available_flags) {
+		this.available_flags = available_flags;
+	}
+
 	public String getSesso() {
 		return sesso;
 	}
