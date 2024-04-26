@@ -370,6 +370,17 @@ public class Torneo extends Database{
 		
 	}
 	
+	
+	
+	public void abbandonaTorneo(String email) throws SQLException {
+		
+		QueryManager.DELETE_PARTECIPAZIONE_STM.setString(1, email);
+		QueryManager.DELETE_PARTECIPAZIONE_STM.setString(2, this.nome_evento);
+		QueryManager.DELETE_PARTECIPAZIONE_STM.setString(3, this.dateTime);
+		
+		QueryManager.DELETE_PARTECIPAZIONE_STM.executeUpdate();
+	}
+	
 	public String getDateTime() {
 		return dateTime;
 	}

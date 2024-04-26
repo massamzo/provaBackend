@@ -51,6 +51,7 @@ public class QueryManager {
 	public static PreparedStatement SELECT_TORNEO_STM;
 	public static PreparedStatement UPDATE_TORNEO_STM;
 	public static PreparedStatement COUNT_PARTECIPAZIONI_STM;
+	public static PreparedStatement DELETE_PARTECIPAZIONE_STM;
 	
 	
 	public QueryManager(Connection conn) throws SQLException {
@@ -69,6 +70,7 @@ public class QueryManager {
 		SELECT_TORNEO_STM = conn.prepareStatement(SELECT_TORNEO);
 		UPDATE_TORNEO_STM = conn.prepareStatement(UPDATE_TORNEO);
 		COUNT_PARTECIPAZIONI_STM = conn.prepareStatement(COUNT_PARTECIPAZIONI);
+		DELETE_PARTECIPAZIONE_STM = conn.prepareStatement(DELETE_PARTECIPAZIONE);
 		
 		
 		

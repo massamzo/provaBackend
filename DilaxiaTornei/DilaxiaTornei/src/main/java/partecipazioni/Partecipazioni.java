@@ -26,7 +26,7 @@ import tornei.Torneo;
 public class Partecipazioni extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	Redirections redirect = new Redirections();
-	private final String[] typesOfRequests = {"i","ed","u"};
+	private final String[] typesOfRequests = {"i","d","u"}; // i = iscriviti, d= abbandona
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -111,6 +111,36 @@ public class Partecipazioni extends HttpServlet {
 				response.getWriter().append(error);
 				e.printStackTrace();
 			}
+			
+			
+		}else if(type_req.equals(typesOfRequests[1])) {
+			
+			
+			String data = jsonData.get("data").getAsString();
+			String nome_evento = jsonData.get("nome_evento").getAsString();
+			String orario = jsonData.get("orario").getAsString();
+			
+			Torneo torneo = null;
+			
+			try {
+				
+				torneo = new Torneo(sessionID, data, nome_evento, orario);
+				Torneo torneoDaIscreversi = torneo.getTorneo();
+				
+				User userDaIscrivere = torneo.getUserKnowingID(); // prendo l'utente utilizzando sessionID
+				
+				torneoDaIscreversi.abbandonaTorneo(userDaIscrivere.getEmail());
+				
+				response.getWriter().append("true");
+				
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				response.getWriter().append("true");
+				e.printStackTrace();
+			}
+			
+			
 		}
 	}
 
