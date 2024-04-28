@@ -522,24 +522,31 @@ public class Torneo extends Database{
 	
 	
 	
-	private String getTorneiPerDataEsterno(String data,ArrayList<String> arrayPartecipanti) throws SQLException {
+	private String getTorneiPerDataEsterno(String data, ArrayList<ArrayList<String>> arrayPartecipanti) throws SQLException {
 
 		QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_SPECIFIC_STM.setString(1, data);
 		QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_SPECIFIC_STM.setBoolean(2, false);
 		
 		ResultSet rs = QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_SPECIFIC_STM.executeQuery();
 		
-		ArrayList<String> nomi = new ArrayList<>();
+		ArrayList<ArrayList<String>> eventi = new ArrayList<>();
+		
 		
 		while(rs.next()) {
 			
-			if(!arrayPartecipanti.contains(rs.getString("nome_torneo"))) {
-				nomi.add(rs.getString("nome_torneo"));
+			ArrayList<String> single_evento = new ArrayList<>();
+			
+			single_evento.add(rs.getString("nome_torneo"));
+			String orario = rs.getString("data_torneo").split(" ")[1];
+			orario = orario.split(":")[0]+":"+orario.split(":")[1];
+			single_evento.add(orario);
+			if(!arrayPartecipanti.contains(single_evento)) {
+				eventi.add(single_evento);
 			}
 			
 		}
 		
-		String nomiArray = new Gson().toJson(nomi);
+		String nomiArray = new Gson().toJson(eventi);
 		
 		
 		return nomiArray;
@@ -547,24 +554,33 @@ public class Torneo extends Database{
 	}
 	
 	
-	private String getTorneiPerDataAll(String data,ArrayList<String> arrayPartecipanti) throws SQLException {
+	private String getTorneiPerDataAll(String data, ArrayList<ArrayList<String>> arrayPartecipanti) throws SQLException {
 		
 		
 		QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_ALL_STM.setString(1, data);
 		
 		ResultSet rs = QueryManager.SELECT_TORNEI_NON_PARTECIPANTI_ALL_STM.executeQuery();
 		
-		ArrayList<String> nomi = new ArrayList<>();
+		ArrayList<ArrayList<String>> eventi = new ArrayList<>();
+		
 		
 		while(rs.next()) {
 			
-			if(!arrayPartecipanti.contains(rs.getString("nome_torneo"))) {
-				nomi.add(rs.getString("nome_torneo"));
+			ArrayList<String> single_evento = new ArrayList<>();
+			
+			single_evento.add(rs.getString("nome_torneo"));
+			String orario = rs.getString("data_torneo").split(" ")[1];
+			orario = orario.split(":")[0]+":"+orario.split(":")[1];
+			single_evento.add(orario);
+			
+			if(!arrayPartecipanti.contains(single_evento)) {
+				eventi.add(single_evento);
 			}
 			
 		}
 		
-		String nomiArray = new Gson().toJson(nomi);
+		String nomiArray = new Gson().toJson(eventi);
+		
 		
 		return nomiArray;
 		
@@ -572,22 +588,31 @@ public class Torneo extends Database{
 	
 	
 	
-	private ArrayList<String> getTorneiPartecipanti(String data, String email) throws SQLException {
+	private ArrayList<ArrayList<String>> getTorneiPartecipanti(String data, String email) throws SQLException {
 		
 		QueryManager.SELECT_TORNEI_PARTECIPANTI_STM.setString(1, data);
 		QueryManager.SELECT_TORNEI_PARTECIPANTI_STM.setString(2, email);
 		
 		ResultSet rs = QueryManager.SELECT_TORNEI_PARTECIPANTI_STM.executeQuery();
 		
-		ArrayList<String> nomi = new ArrayList<>();
+		ArrayList<ArrayList<String>> eventi = new ArrayList<>();
 		
 		while(rs.next()) {
-			nomi.add(rs.getString("nome_torneo"));
+			
+			ArrayList<String> single_evento = new ArrayList<>();
+			
+			single_evento.add(rs.getString("nome_torneo"));
+			String orario = rs.getString("data_torneo").split(" ")[1];
+			orario = orario.split(":")[0]+":"+orario.split(":")[1];
+			
+			single_evento.add(orario);
+			
+			eventi.add(single_evento);
 		}
 		
 		
 		
-		return nomi;
+		return eventi;
 		
 		
 	}
@@ -601,7 +626,7 @@ public class Torneo extends Database{
 		// get the tornei partecipanti dalla persona
 		JsonObject jsonObject = new JsonObject();
 		
-		ArrayList<String> arrayPartecipanti = getTorneiPartecipanti(data, user.getEmail());
+		ArrayList<ArrayList<String>> arrayPartecipanti = getTorneiPartecipanti(data, user.getEmail());
 		
 		jsonObject.addProperty("partecipanti", new Gson().toJson(arrayPartecipanti)); // converto in json array
 				

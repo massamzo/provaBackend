@@ -24,7 +24,7 @@ import sessions.Redirections;
 public class GetTornei extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	Redirections redirect = new Redirections();
-	private final String[] typesOfRequests = {"m","d","t"}; // m = eventi di quel mese, d= eventi di quella data
+	private final String[] typesOfRequests = {"m","d","t"}; // m = eventi di quel mese, d= eventi di quella data, t = "mando i dati di un torneo"
     /**
      * @see HttpServlet#HttpServlet()
      */

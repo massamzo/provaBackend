@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap; 
 
 public class User extends Database{
@@ -243,6 +244,24 @@ public class User extends Database{
 		}
 		
 		throw new SQLException();
+	}
+	
+	
+	public ArrayList<String> getEventiConcessi() throws SQLException{
+		
+		QueryManager.SELECT_EVENTI_CONCESSI_STM.setString(1, this.flag);
+		
+		ResultSet rs = QueryManager.SELECT_EVENTI_CONCESSI_STM.executeQuery();
+		
+		ArrayList<String> eventi = new ArrayList<>();
+		
+		while(rs.next()) {
+			
+			eventi.add(rs.getString("evento"));
+			
+		}
+		
+		return eventi;
 	}
 	
 	

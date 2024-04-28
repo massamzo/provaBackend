@@ -1,6 +1,8 @@
 package sessions;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -8,6 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import databasePack.DbRegisterLogin;
+import databasePack.User;
 import sessions.Sessionmanager;
 
 import javax.servlet.http.Cookie;
@@ -82,12 +89,7 @@ public class Sessioninfo2 extends HttpServlet {
 //				System.out.println(cognome);
 				
 				
-				  StringBuilder jsonResponse = new StringBuilder();
-				    jsonResponse.append("{");
-				    jsonResponse.append("\"nome\": \""+nome+"\",");
-				    jsonResponse.append("\"cognome\": \""+cognome+"\",");
-				    jsonResponse.append("\"email\": \""+email+"\"");
-				    jsonResponse.append("}");
+				  
 				    
 				   
 				    
@@ -95,11 +97,32 @@ public class Sessioninfo2 extends HttpServlet {
 				 
 				 if(nome != null) {
 					 
+					 JsonObject jsonObject = new JsonObject();
+					 jsonObject.addProperty("nome", nome);
+					 jsonObject.addProperty("cognome", cognome);
+					 jsonObject.addProperty("email", email);
+					 
+					 // in base al flag gli restituisco gli eventi
+					 
+					 User user = new User(email, "");
+					 User userLoggato = user.getUserFromdb();
+					 
+					 ArrayList<String> eventi = userLoggato.getEventiConcessi();
+					 
+					 jsonObject.addProperty("eventi_disponibili", new Gson().toJson(eventi));
+					 
+					 DbRegisterLogin db = new DbRegisterLogin();
+					 ArrayList<String> sport = db.getSports();
+					 
+					 jsonObject.addProperty("sport_disponibili", new Gson().toJson(sport));
+					 
+					 String jsonResponse = new Gson().toJson(jsonObject);
+					 
 					 System.out.println("risposta data");
 					 response.getWriter().append(jsonResponse);
 					
 				 }else {
-					 response.getWriter().append(jsonResponse); 
+					 response.getWriter().append("errore nei sessioni"); 
 					 response.sendRedirect(redirect.getLOGIN_PAGE());
 				 
 				 }

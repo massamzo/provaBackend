@@ -10,6 +10,7 @@ import de.mkammerer.argon2.Argon2Factory;
 
 import java.time.LocalDateTime; // Import the LocalDateTime class
 import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
+import java.util.ArrayList;
 
 
 public class DbRegisterLogin extends Database {
@@ -190,5 +191,18 @@ public class DbRegisterLogin extends Database {
 		 }
 		 
 		 return false;
+	 }
+	 
+	 
+	 
+	 public ArrayList<String> getSports() throws SQLException{
+		 
+		 ResultSet rs = QueryManager.SELECT_SPORTS_STM.executeQuery();
+		 ArrayList<String> sports = new ArrayList<>();
+		 while(rs.next()) {
+			 sports.add(rs.getString("nome"));
+		 }
+		 
+		 return sports;
 	 }
 }
