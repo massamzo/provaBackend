@@ -1,4 +1,5 @@
 package mail;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.mail.*;  
@@ -19,6 +20,7 @@ public class Mailer {
 	private String reciever;
 	private String registrationConfirmText;
 	private String resetPassText;
+	private ArrayList<String> recievers;
 	
 	
 	
@@ -36,6 +38,24 @@ public class Mailer {
 			this.subject = "Playsphere reset Password";
 		}
 	}
+	
+	
+	public Mailer(String reciever, String subject, String text, boolean isLink) {
+		
+		this.reciever = reciever;
+		this.subject = subject;
+		this.registrationConfirmText = text;
+				
+	}
+	
+	public Mailer(ArrayList<String> recievers, String subject, String text) {
+		
+		this.recievers = recievers;
+		this.subject = subject;
+		this.registrationConfirmText = text;
+		
+	}
+	
 	
 	public boolean send() {
 		
@@ -68,6 +88,47 @@ public class Mailer {
 	    }catch(MessagingException e) {
 	    	e.printStackTrace();
 	    	return false;
+	    }
+	}
+	
+	public void sendMultiple() throws Exception {
+		
+		Properties props = new Properties();
+	    props.put("mail.smtp.host", host);
+	    props.put("mail.smtp.port", port);
+	    props.put("mail.smtp.auth", "true");
+	    props.put("mail.smtp.starttls.enable", "true");
+		
+	    
+	    Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(sender, password);
+            }
+        });
+	    
+	    try {
+	    	
+	    	// preparing the recievers
+	    	
+	    	InternetAddress[] toAddresses = new InternetAddress[recievers.size()];
+	    	
+	    	for(int i=0; i<recievers.size(); i++) {
+	    		
+	    		toAddresses[i] = new InternetAddress(recievers.get(i));
+	    	}
+	    	
+	    	Message message = new MimeMessage(session);
+	    	message.setFrom(new InternetAddress(Mailer.sender));
+	    	message.setRecipients(Message.RecipientType.TO, toAddresses);
+	    	message.setSubject(subject);
+	    	message.setText(registrationConfirmText);
+	    	Transport.send(message);
+	    	
+	   
+	    	
+	    }catch(MessagingException e) {
+	    	e.printStackTrace();
+	    	throw new Exception("errore nel mandare le mail");
 	    }
 	}
 

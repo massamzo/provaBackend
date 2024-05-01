@@ -4,7 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap; 
+import java.util.HashMap;
+
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory; 
 
 public class User extends Database{
 	private final String PROF = "avbo.it";
@@ -208,6 +211,20 @@ public class User extends Database{
 	}
 	
 	
+	
+	public boolean verifyPassword(String pass) {
+		
+		 Argon2 argon2 = Argon2Factory.create();
+		 
+		 if(argon2.verify(this.password, pass)) {
+			 return true;
+		 }
+		 
+		 return false;
+	}
+	
+	
+
 	private void calculateFlag() {
 		
 		String emailProvider = this.email.split("@")[1]; //ex.  @avbo.it

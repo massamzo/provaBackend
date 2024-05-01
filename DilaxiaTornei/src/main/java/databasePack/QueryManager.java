@@ -17,7 +17,7 @@ public class QueryManager {
 	private static final String SELECT_USER = "SELECT email_utente as email, nome, cognome, password, sesso, data_nascita, data_creazione FROM utenti WHERE email_utente = ?";
 	private static final String SELECT_TEMP_PASS = "SELECT email_utente as email FROM temp_pass_recover WHERE passkey = ?";
 	//select dalle tabelle: partecipazioni, tornei, sports
-	private static final String SELECT_PARTECIPAZIONI = "SELECT email_partecipante, nome_torneo, data_torneo FROM partecipazioni WHERE (email_partecipante=? AND nome_torneo=? AND data_torneo=?)";
+	private static final String SELECT_PARTECIPAZIONI = "SELECT email_partecipante FROM partecipazioni WHERE (email_partecipante=? AND DATE(data_torneo)=?)";
 	private static final String SELECT_TORNEO = "SELECT nome_torneo, data_torneo, descrizione, eta_minima, min_partecipanti, max_partecipanti, is_interno, email_organizzatore, sport FROM tornei WHERE (nome_torneo=? AND data_torneo=?)";
 	private static final String SELECT_SPORTS = "SELECT nome FROM sports";
 	private static final String SELECT_TORNEO_BY_DATE = "SELECT nome_torneo FROM tornei WHERE DATE(data_torneo) = ? AND nome_torneo = ?";
@@ -27,6 +27,9 @@ public class QueryManager {
 	private static final String SELECT_TORNEI_NON_PARTECIPANTI_ALL = "SELECT nome_torneo, data_torneo FROM tornei WHERE DATE(tornei.data_torneo) = ?";
 	private static final String SELECT_TORNEI_PARTECIPANTI = "SELECT nome_torneo, data_torneo FROM partecipazioni WHERE DATE(data_torneo)=? AND email_partecipante=?";
 	private static final String SELECT_EVENTI_CONCESSI = "SELECT evento FROM privilegi WHERE utente = ?";
+	private static final String SELECT_IS_INTERNO = "SELECT is_interno FROM tornei WHERE data_torneo = ? AND nome_torneo = ?";
+	private static final String SELECT_PARTECIPANTI = "SELECT email_partecipante FROM partecipazioni WHERE (nome_torneo = ? AND data_torneo = ?)";
+	
 	
 	private static final String UPDATE_PASS = "UPDATE utenti SET password = ? WHERE email_utente = ?";
 	//update delle tabelle: partecipazioni, tornei, sports
@@ -65,7 +68,9 @@ public class QueryManager {
 	public static PreparedStatement SELECT_TORNEI_PARTECIPANTI_STM;
 	public static PreparedStatement SELECT_EVENTI_CONCESSI_STM;
 	public static PreparedStatement SELECT_SPORTS_STM;
-	
+	public static PreparedStatement SELECT_IS_INTERNO_STM;
+	public static PreparedStatement SELECT_PARTECIPAZIONI_STM;
+	public static PreparedStatement SELECT_PARTECIPANTI_STM;
 	
 	public QueryManager(Connection conn) throws SQLException {
 		INSERT_USER_STM = conn.prepareStatement(INSERT_USER);
@@ -91,6 +96,10 @@ public class QueryManager {
 		SELECT_TORNEI_PARTECIPANTI_STM = conn.prepareStatement(SELECT_TORNEI_PARTECIPANTI);
 		SELECT_EVENTI_CONCESSI_STM = conn.prepareStatement(SELECT_EVENTI_CONCESSI);
 		SELECT_SPORTS_STM = conn.prepareStatement(SELECT_SPORTS);
+		SELECT_IS_INTERNO_STM = conn.prepareStatement(SELECT_IS_INTERNO);
+		SELECT_PARTECIPAZIONI_STM = conn.prepareStatement(SELECT_PARTECIPAZIONI);
+		SELECT_PARTECIPANTI_STM = conn.prepareStatement(SELECT_PARTECIPANTI);
+		
 		
 	}
 }

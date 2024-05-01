@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import databasePack.Database;
 import databasePack.QueryManager;
 import databasePack.User;
+import mail.Mailer;
 import sessions.Sessionmanager;
 
 public class Torneo extends Database{
@@ -442,7 +443,7 @@ public class Torneo extends Database{
 	
 	
 	
-	private String getTorneoPerMeseEsterno(String mese, String anno) throws SQLException {
+	private String getTorneoPerMeseEsterno(String mese, String anno, String email) throws SQLException {
 
 		QueryManager.SELECT_SPECIFIC_TORNEO_MESE_STM.setString(1,mese);
 		QueryManager.SELECT_SPECIFIC_TORNEO_MESE_STM.setString(2,anno);
@@ -453,12 +454,30 @@ public class Torneo extends Database{
 		JsonObject jsonObject = new JsonObject();
 		
 		
-		ArrayList<String> dates = new ArrayList<>();
+		ArrayList<ArrayList<String>> dates = new ArrayList<>();
 		
 		while(rs.next()) {
 			
 			String date = rs.getString("data_torneo").split(" ")[0];
-			dates.add(date);
+			
+			ArrayList<String> singleArray = new ArrayList<>();
+			
+			singleArray.add(date);
+			
+			// enter the 1 = partecipa in quella data a qualche torneo, 0 = non pasrtecipa
+			
+			QueryManager.SELECT_PARTECIPAZIONI_STM.setString(1, email);
+			QueryManager.SELECT_PARTECIPAZIONI_STM.setString(2, date);
+			
+			ResultSet rs2 = QueryManager.SELECT_PARTECIPAZIONI_STM.executeQuery();
+			
+			if(rs2.next()) {
+				singleArray.add("1");
+			}else {
+				singleArray.add("0");
+			}
+			
+			dates.add(singleArray);
 		}
 		
 		String datesArray = new Gson().toJson(dates);
@@ -468,7 +487,7 @@ public class Torneo extends Database{
 	}
 	
 	
-	private String getAllTorneoPerMese(String mese, String anno) throws SQLException {
+	private String getAllTorneoPerMese(String mese, String anno, String email) throws SQLException {
 		
 		QueryManager.SELECT_ALL_TORNEO_MESE_STM.setString(1,mese);
 		QueryManager.SELECT_ALL_TORNEO_MESE_STM.setString(2,anno);
@@ -478,12 +497,30 @@ public class Torneo extends Database{
 		JsonObject jsonObject = new JsonObject();
 		
 		
-		ArrayList<String> dates = new ArrayList<>();
+		ArrayList<ArrayList<String>> dates = new ArrayList<>();
 		
 		while(rs.next()) {
 			
 			String date = rs.getString("data_torneo").split(" ")[0];
-			dates.add(date);
+			
+			ArrayList<String> singleArray = new ArrayList<>();
+			
+			singleArray.add(date);
+			
+			// enter the 1 = partecipa in quella data a qualche torneo, 0 = non pasrtecipa
+			
+			QueryManager.SELECT_PARTECIPAZIONI_STM.setString(1, email);
+			QueryManager.SELECT_PARTECIPAZIONI_STM.setString(2, date);
+			
+			ResultSet rs2 = QueryManager.SELECT_PARTECIPAZIONI_STM.executeQuery();
+			
+			if(rs2.next()) {
+				singleArray.add("1");
+			}else {
+				singleArray.add("0");
+			}
+			
+			dates.add(singleArray);
 		}
 		
 		String datesArray = new Gson().toJson(dates);
@@ -492,6 +529,9 @@ public class Torneo extends Database{
 		return new Gson().toJson(jsonObject);
 		
 	}
+	
+	
+	
 	
 	
 	
@@ -508,11 +548,11 @@ public class Torneo extends Database{
 			
 			// eventi da mandare se un utente è esterno
 			
-			return getTorneoPerMeseEsterno(mese,anno);
+			return getTorneoPerMeseEsterno(mese,anno, user.getEmail());
 			
 		}else {
 			
-			return getAllTorneoPerMese(mese,anno);
+			return getAllTorneoPerMese(mese,anno, user.getEmail());
 			
 		}
 		
@@ -540,6 +580,23 @@ public class Torneo extends Database{
 			String orario = rs.getString("data_torneo").split(" ")[1];
 			orario = orario.split(":")[0]+":"+orario.split(":")[1];
 			single_evento.add(orario);
+			
+			QueryManager.SELECT_IS_INTERNO_STM.setString(1, rs.getString("data_torneo"));
+			QueryManager.SELECT_IS_INTERNO_STM.setString(2, rs.getString("nome_torneo"));
+			
+			ResultSet rs2 = QueryManager.SELECT_IS_INTERNO_STM.executeQuery();
+			
+			if(rs2.next()) {
+				if(rs2.getBoolean("is_interno")) {
+					single_evento.add("1");
+				}else {
+					single_evento.add("0");
+				}
+			}else {
+				throw new SQLException();
+			}
+			
+			
 			if(!arrayPartecipanti.contains(single_evento)) {
 				eventi.add(single_evento);
 			}
@@ -573,6 +630,20 @@ public class Torneo extends Database{
 			orario = orario.split(":")[0]+":"+orario.split(":")[1];
 			single_evento.add(orario);
 			
+			QueryManager.SELECT_IS_INTERNO_STM.setString(1, rs.getString("data_torneo"));
+			QueryManager.SELECT_IS_INTERNO_STM.setString(2, rs.getString("nome_torneo"));
+			
+			ResultSet rs2 = QueryManager.SELECT_IS_INTERNO_STM.executeQuery();
+			if(rs2.next()) {
+				if(rs2.getBoolean("is_interno")) {
+					single_evento.add("1");
+				}else {
+					single_evento.add("0");
+				}
+			}else {
+				throw new SQLException();
+			}
+			
 			if(!arrayPartecipanti.contains(single_evento)) {
 				eventi.add(single_evento);
 			}
@@ -605,8 +676,26 @@ public class Torneo extends Database{
 			String orario = rs.getString("data_torneo").split(" ")[1];
 			orario = orario.split(":")[0]+":"+orario.split(":")[1];
 			
+			
 			single_evento.add(orario);
 			
+			// is interno or not
+			
+			QueryManager.SELECT_IS_INTERNO_STM.setString(1, rs.getString("data_torneo"));
+			QueryManager.SELECT_IS_INTERNO_STM.setString(2, rs.getString("nome_torneo"));
+			
+			ResultSet rs2 = QueryManager.SELECT_IS_INTERNO_STM.executeQuery();
+			
+			if(rs2.next()) {
+				if(rs2.getBoolean("is_interno")) {
+					single_evento.add("1");
+				}else {
+					single_evento.add("0");
+				}
+			}else {
+				throw new SQLException();
+			}
+		
 			eventi.add(single_evento);
 		}
 		
@@ -656,7 +745,41 @@ public class Torneo extends Database{
 	
 	
 	
+	public void alertPartecipanti() throws SQLException {
+		
+		QueryManager.SELECT_PARTECIPANTI_STM.setString(1, this.nome_evento);
+		QueryManager.SELECT_PARTECIPANTI_STM.setString(2, this.dateTime);
+		
+		ResultSet rs = QueryManager.SELECT_PARTECIPANTI_STM.executeQuery();
+		
+		ArrayList<String> recievers = new ArrayList<>();
+		
+		
+		while(rs.next()) {
+			
+			recievers.add(rs.getString("email_partecipante"));
+		}
+		
 	
+		if(recievers.size() > 0) {
+			
+
+			String subject = "Torneo aggiornato";
+			String text = "Ciao, ti avvisiamo che il torneo '"+this.nome_evento+"' e' stato modificato,\necco i dettagli : \n\ndata torneo : "+this.data+"\norario : "+this.orario+"\ndescrizione : "+this.descrizione+"\nnumero partecipanti massimi : "+this.numero_partecipanti_max+"\neta minima : "+this.eta_minima+"\nsport : "+this.sport;
+			
+			Mailer mail = new Mailer(recievers, subject, text);
+			
+			try {
+				mail.sendMultiple();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+			
+		
+	}
 	
 	
 	

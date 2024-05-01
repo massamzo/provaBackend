@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import databasePack.QueryManager;
 import databasePack.User;
 import sessions.Redirections;
 
@@ -176,7 +177,7 @@ public class TorneiManager extends HttpServlet {
 				e.printStackTrace();
 			}
 			
-		}else if(type_req.equals(typesOfRequests[2])) {
+		}else if(type_req.equals(typesOfRequests[2])) { // if the user want's to update it
 			
 			String data = jsonData.get("data").getAsString();
 			String nome_evento = jsonData.get("nome_evento").getAsString();
@@ -190,9 +191,15 @@ public class TorneiManager extends HttpServlet {
 			try {
 				torneo = new Torneo(sessionID, data,nome_evento, orario, descrizione, numero_partecipanti_max, eta_minima,sport, "");
 				torneo.update();
-				response.getWriter().append("true");
 				
-				//manda la mail
+				response.getWriter().append("true");
+				torneo.alertPartecipanti();
+				
+				//ottieni tutti i risultati
+				
+			
+				
+				
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
