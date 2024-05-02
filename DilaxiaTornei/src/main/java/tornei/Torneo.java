@@ -3,7 +3,9 @@ package tornei;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
@@ -32,13 +34,15 @@ public class Torneo extends Database{
 	private Boolean isInterno = false;
 	private String dateTime;
 	private String email_organizzatore;
+	private String lon;
+	private String lat;
 	
 	private Connection conn = null;
 	private QueryManager qm;
 	
 	
 	public Torneo(String sessionID, String data, String nome_evento, String orario, String descrizione,
-			String numero_partecipanti_max, String eta_minima, String sport, String tipo_evento) throws SQLException {
+			String numero_partecipanti_max, String eta_minima, String sport, String tipo_evento, String lon, String lat) throws SQLException {
 		super();
 		this.sessionID = sessionID;
 		this.data = data;
@@ -49,6 +53,9 @@ public class Torneo extends Database{
 		this.eta_minima = Integer.parseInt(eta_minima);
 		this.sport = sport;
 		this.tipo_evento = tipo_evento;
+		this.lon = lon;
+		this.lat = lat;
+		
 		
 		if(this.tipo_evento.equals("Crea interno")) {
 			this.isInterno = true;
@@ -63,7 +70,7 @@ public class Torneo extends Database{
 	
 	
 	public Torneo(String sessionID, String data, String nome_evento, String orario, String descrizione,
-			String numero_partecipanti_max, String eta_minima, String sport, String tipo_evento, String email_organizzatore) throws SQLException {
+			String numero_partecipanti_max, String eta_minima, String sport, String tipo_evento, String email_organizzatore, String lon, String lat) throws SQLException {
 		super();
 		this.sessionID = sessionID;
 		this.data = data;
@@ -75,6 +82,8 @@ public class Torneo extends Database{
 		this.sport = sport;
 		this.tipo_evento = tipo_evento;
 		this.email_organizzatore = email_organizzatore;
+		this.lon = lon;
+		this.lat = lat;
 		
 		if(this.tipo_evento.equals("Crea interno")) {
 			this.isInterno = true;
@@ -124,6 +133,28 @@ public class Torneo extends Database{
 	public void setIsInterno(Boolean isInterno) {
 		this.isInterno = isInterno;
 	}
+	
+	
+
+	public String getLon() {
+		return lon;
+	}
+
+
+	public void setLon(String lon) {
+		this.lon = lon;
+	}
+
+
+	public String getLat() {
+		return lat;
+	}
+
+
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+
 
 	public void setSessionID(String sessionID) {
 		this.sessionID = sessionID;
@@ -228,7 +259,7 @@ public class Torneo extends Database{
 		LocalDateTime now = LocalDateTime.now();
 		String[] dataLoc = this.data.split("-");
 		String[] timeLoc = this.orario.split(":");
-        LocalDateTime torneiDateTime = LocalDateTime.of(Integer.parseInt(dataLoc[0]), Integer.parseInt(dataLoc[1]), Integer.parseInt(dataLoc[2]),  Integer.parseInt(timeLoc[0])-4, Integer.parseInt(timeLoc[1]));
+        LocalDateTime torneiDateTime = LocalDateTime.of(Integer.parseInt(dataLoc[0]), Integer.parseInt(dataLoc[1]), Integer.parseInt(dataLoc[2]),  Integer.parseInt(timeLoc[0])-2, Integer.parseInt(timeLoc[1]));
         
         
         
@@ -292,6 +323,8 @@ public class Torneo extends Database{
 		QueryManager.INSERT_TORNEO_STM.setBoolean(7, this.isInterno);
 		QueryManager.INSERT_TORNEO_STM.setString(8, userfromDB.getEmail()); // email organizzatore
 		QueryManager.INSERT_TORNEO_STM.setString(9, this.sport);
+		QueryManager.INSERT_TORNEO_STM.setString(10, this.lon);
+		QueryManager.INSERT_TORNEO_STM.setString(11, this.lat);
 		
 		// execute the query and insert into database
 		
@@ -388,7 +421,7 @@ public class Torneo extends Database{
 			}
 			
 			
-			return new Torneo("", datadb, rs.getString("nome_torneo"), ora, rs.getString("descrizione"), rs.getString("max_partecipanti"), rs.getString("eta_minima"), rs.getString("sport"), creaTipo, rs.getString("email_organizzatore"));
+			return new Torneo("", datadb, rs.getString("nome_torneo"), ora, rs.getString("descrizione"), rs.getString("max_partecipanti"), rs.getString("eta_minima"), rs.getString("sport"), creaTipo, rs.getString("email_organizzatore"), rs.getString("lon"), rs.getString("lat"));
 		}
 		
 		throw new SQLException("torneo non trovato");
@@ -413,14 +446,31 @@ public class Torneo extends Database{
 	
 	
 	
-	public void iscriviAlTorneo(String email) throws Exception {
+	public void iscriviAlTorneo(String email, String ddn) throws Exception {
 		
-		if(getPartecipantiNum() < this.numero_partecipanti_max) {
+		// calculate the age
+		
+		LocalDate dob = LocalDate.parse(ddn);
+        
+        // Get today's date
+        LocalDate today = LocalDate.now();
+        
+        // Calculate the period between the date of birth and today
+        Period period = Period.between(dob, today);
+        
+        // Get the years, months, and days from the period
+        int age = period.getYears();
+		
+		if(getPartecipantiNum() < this.numero_partecipanti_max && age >= this.eta_minima) {
 			QueryManager.INSERT_PARTECIPAZIONE_STM.setString(1, email);
 			QueryManager.INSERT_PARTECIPAZIONE_STM.setString(2, this.nome_evento);
 			QueryManager.INSERT_PARTECIPAZIONE_STM.setString(3, this.dateTime);
 			
 			QueryManager.INSERT_PARTECIPAZIONE_STM.executeUpdate();
+		}else if(age < this.eta_minima){
+			
+			throw new Exception("hai un eta minore");
+			
 		}else {
 			
 			throw new Exception("torneo pieno");

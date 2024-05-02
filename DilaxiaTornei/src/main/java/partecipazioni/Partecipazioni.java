@@ -100,14 +100,14 @@ public class Partecipazioni extends HttpServlet {
 				
 				User userDaIscrivere = torneo.getUserKnowingID(); // prendo l'utente utilizzando sessionID
 				
-				torneoDaIscreversi.iscriviAlTorneo(userDaIscrivere.getEmail());
+				torneoDaIscreversi.iscriviAlTorneo(userDaIscrivere.getEmail(),userDaIscrivere.getDdn().split(" ")[0]);
 				
 				response.getWriter().append("true");
 				
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				String error = "iscrizione non effettuata";
+				String error = e.getMessage();
 				response.getWriter().append(error);
 				e.printStackTrace();
 			}

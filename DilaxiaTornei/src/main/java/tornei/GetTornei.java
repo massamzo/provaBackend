@@ -158,6 +158,8 @@ HttpSession session = request.getSession();
 				jsonObject.addProperty("sport", torneoRichiesto.getSport());
 				jsonObject.addProperty("is_interno", torneoRichiesto.getIsInterno());
 				jsonObject.addProperty("num_iscritti", num_partecipanti);
+				jsonObject.addProperty("lon", torneoRichiesto.getLon());
+				jsonObject.addProperty("lat",  torneoRichiesto.getLat());
 				
 				String jsonRisposta = new Gson().toJson(jsonObject);
 				

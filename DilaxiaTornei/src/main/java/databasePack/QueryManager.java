@@ -10,7 +10,7 @@ public class QueryManager {
 	private static final String INSERT_TEMP_PASS = "INSERT INTO temp_pass_recover(email_utente, passkey, expire_at) VALUES(?, ?, ?)";
 	//insert nelle tabelle: partecipazioni, tornei, sports
 	private static final String INSERT_PARTECIPAZIONE = "INSERT INTO partecipazioni(email_partecipante, nome_torneo, data_torneo) VALUES(?, ?, ?)";
-	private static final String INSERT_TORNEO = "INSERT INTO tornei(nome_torneo, data_torneo, descrizione, eta_minima, min_partecipanti, max_partecipanti, is_interno, email_organizzatore, sport) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private static final String INSERT_TORNEO = "INSERT INTO tornei(nome_torneo, data_torneo, descrizione, eta_minima, min_partecipanti, max_partecipanti, is_interno, email_organizzatore, sport, lon, lat) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String INSERT_SPORT = "INSERT INTO sports(nome) VALUES(?)";
 	
 	private static final String SELECT_TEMP_USER = "SELECT email_utente as email, nome, cognome, password, otp, sesso, data_nascita, expire_at FROM temp_utenti WHERE email_utente = ?";
@@ -18,7 +18,7 @@ public class QueryManager {
 	private static final String SELECT_TEMP_PASS = "SELECT email_utente as email FROM temp_pass_recover WHERE passkey = ?";
 	//select dalle tabelle: partecipazioni, tornei, sports
 	private static final String SELECT_PARTECIPAZIONI = "SELECT email_partecipante FROM partecipazioni WHERE (email_partecipante=? AND DATE(data_torneo)=?)";
-	private static final String SELECT_TORNEO = "SELECT nome_torneo, data_torneo, descrizione, eta_minima, min_partecipanti, max_partecipanti, is_interno, email_organizzatore, sport FROM tornei WHERE (nome_torneo=? AND data_torneo=?)";
+	private static final String SELECT_TORNEO = "SELECT nome_torneo, data_torneo, descrizione, eta_minima, min_partecipanti, max_partecipanti, is_interno, email_organizzatore, sport, lon, lat FROM tornei WHERE (nome_torneo=? AND data_torneo=?)";
 	private static final String SELECT_SPORTS = "SELECT nome FROM sports";
 	private static final String SELECT_TORNEO_BY_DATE = "SELECT nome_torneo FROM tornei WHERE DATE(data_torneo) = ? AND nome_torneo = ?";
 	private static final String SELECT_ALL_TORNEO_MESE = "SELECT DISTINCT DATE(data_torneo) as data_torneo FROM tornei WHERE MONTH(data_torneo) = ? AND YEAR(data_torneo) = ?";

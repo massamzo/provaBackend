@@ -100,6 +100,8 @@ public class TorneiManager extends HttpServlet {
 			String eta_minima = jsonData.get("eta_minima").getAsString();
 			String sport = jsonData.get("sport").getAsString();
 			String tipo_evento = jsonData.get("tipo_evento").getAsString();
+			String lon = jsonData.get("lon").getAsString();
+			String lat = jsonData.get("lat").getAsString();
 			
 			
 			
@@ -107,7 +109,7 @@ public class TorneiManager extends HttpServlet {
 			
 			Torneo torneo = null;
 			try {
-				torneo = new Torneo(sessionID, data,nome_evento, orario, descrizione, numero_partecipanti_max, eta_minima,sport, tipo_evento);
+				torneo = new Torneo(sessionID, data,nome_evento, orario, descrizione, numero_partecipanti_max, eta_minima,sport, tipo_evento, lon, lat);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -122,7 +124,7 @@ public class TorneiManager extends HttpServlet {
 					User utente = torneo.getUserKnowingID();
 					
 					// utente che crea il torneo si iscrive anche
-					torneo.iscriviAlTorneo(utente.getEmail());
+					torneo.iscriviAlTorneo(utente.getEmail(), utente.getDdn().split(" ")[0]);
 					
 					// se tutto ok, allora mando valore esecuzione
 					response.getWriter().append("true");
@@ -189,7 +191,7 @@ public class TorneiManager extends HttpServlet {
 			
 			Torneo torneo = null;
 			try {
-				torneo = new Torneo(sessionID, data,nome_evento, orario, descrizione, numero_partecipanti_max, eta_minima,sport, "");
+				torneo = new Torneo(sessionID, data,nome_evento, orario, descrizione, numero_partecipanti_max, eta_minima,sport, "","","");
 				torneo.update();
 				
 				response.getWriter().append("true");
