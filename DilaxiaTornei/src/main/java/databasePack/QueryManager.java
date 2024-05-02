@@ -23,13 +23,13 @@ public class QueryManager {
 	private static final String SELECT_TORNEO_BY_DATE = "SELECT nome_torneo FROM tornei WHERE DATE(data_torneo) = ? AND nome_torneo = ?";
 	private static final String SELECT_ALL_TORNEO_MESE = "SELECT DISTINCT DATE(data_torneo) as data_torneo FROM tornei WHERE MONTH(data_torneo) = ? AND YEAR(data_torneo) = ?";
 	private static final String SELECT_SPECIFIC_TORNEO_MESE = "SELECT DISTINCT DATE(data_torneo) as data_torneo FROM tornei WHERE MONTH(data_torneo) = ? AND YEAR(data_torneo) = ? AND is_interno = ?";
-	private static final String SELECT_TORNEI_NON_PARTECIPANTI_SPECIFIC = "SELECT nome_torneo, data_torneo FROM tornei WHERE (DATE(tornei.data_torneo) = ? AND tornei.is_interno = ?)";
-	private static final String SELECT_TORNEI_NON_PARTECIPANTI_ALL = "SELECT nome_torneo, data_torneo FROM tornei WHERE DATE(tornei.data_torneo) = ?";
-	private static final String SELECT_TORNEI_PARTECIPANTI = "SELECT nome_torneo, data_torneo FROM partecipazioni WHERE DATE(data_torneo)=? AND email_partecipante=?";
+	private static final String SELECT_TORNEI_NON_PARTECIPANTI_SPECIFIC = "SELECT nome_torneo, data_torneo FROM tornei WHERE (DATE(tornei.data_torneo) = ? AND tornei.is_interno = ?) ORDER BY data_torneo";
+	private static final String SELECT_TORNEI_NON_PARTECIPANTI_ALL = "SELECT nome_torneo, data_torneo FROM tornei WHERE DATE(tornei.data_torneo) = ? ORDER BY data_torneo";
+	private static final String SELECT_TORNEI_PARTECIPANTI = "SELECT nome_torneo, data_torneo FROM partecipazioni WHERE DATE(data_torneo)=? AND email_partecipante=? ORDER BY data_torneo";
 	private static final String SELECT_EVENTI_CONCESSI = "SELECT evento FROM privilegi WHERE utente = ?";
 	private static final String SELECT_IS_INTERNO = "SELECT is_interno FROM tornei WHERE data_torneo = ? AND nome_torneo = ?";
 	private static final String SELECT_PARTECIPANTI = "SELECT email_partecipante FROM partecipazioni WHERE (nome_torneo = ? AND data_torneo = ?)";
-	
+	private static final String SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI = "SELECT nome_torneo, data_torneo FROM tornei as t WHERE data_torneo > NOW() AND EXISTS (SELECT email_partecipante FROM partecipazioni as p WHERE email_partecipante = ? AND p.nome_torneo = t.nome_torneo AND p.data_torneo = t.data_torneo) ORDER BY data_torneo";
 	
 	private static final String UPDATE_PASS = "UPDATE utenti SET password = ? WHERE email_utente = ?";
 	//update delle tabelle: partecipazioni, tornei, sports
@@ -71,6 +71,8 @@ public class QueryManager {
 	public static PreparedStatement SELECT_IS_INTERNO_STM;
 	public static PreparedStatement SELECT_PARTECIPAZIONI_STM;
 	public static PreparedStatement SELECT_PARTECIPANTI_STM;
+	public static PreparedStatement SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI_STM;
+	
 	
 	public QueryManager(Connection conn) throws SQLException {
 		INSERT_USER_STM = conn.prepareStatement(INSERT_USER);
@@ -99,7 +101,7 @@ public class QueryManager {
 		SELECT_IS_INTERNO_STM = conn.prepareStatement(SELECT_IS_INTERNO);
 		SELECT_PARTECIPAZIONI_STM = conn.prepareStatement(SELECT_PARTECIPAZIONI);
 		SELECT_PARTECIPANTI_STM = conn.prepareStatement(SELECT_PARTECIPANTI);
-		
+		SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI_STM = conn.prepareStatement(SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI);
 		
 	}
 }

@@ -24,7 +24,7 @@ import sessions.Redirections;
 public class GetTornei extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	Redirections redirect = new Redirections();
-	private final String[] typesOfRequests = {"m","d","t"}; // m = eventi di quel mese, d= eventi di quella data, t = "mando i dati di un torneo"
+	private final String[] typesOfRequests = {"m","d","t","p"}; // m = eventi di quel mese, d= eventi di quella data, t = "mando i dati di un torneo", p= "tornei partecipanti"
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -175,6 +175,22 @@ HttpSession session = request.getSession();
 				e.printStackTrace();
 			}
 			
+			
+		}else if(type_req.equals(typesOfRequests[3])) {
+			
+			Torneo torneo = null;
+			
+			try {
+				
+				torneo = new Torneo(sessionID);
+				String jsonRisposta = torneo.getTorneiPartecipanti();
+				response.getWriter().append(jsonRisposta);
+				
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 		

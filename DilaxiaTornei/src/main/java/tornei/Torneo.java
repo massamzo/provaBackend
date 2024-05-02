@@ -832,5 +832,41 @@ public class Torneo extends Database{
 	}
 	
 	
+	public String getTorneiPartecipanti() throws Exception {
+		
+		// get the user from session ID
+		
+		User user = this.getUserKnowingID();
+		
+		QueryManager.SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI_STM.setString(1, user.getEmail());
+		
+		ResultSet rs = QueryManager.SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI_STM.executeQuery();
+		
+		ArrayList<ArrayList<String>> tornei = new ArrayList<>();
+		
+		while(rs.next()) {
+			
+			ArrayList<String> singleTorneo = new ArrayList<>();
+			
+			String orario = rs.getString("data_torneo").split(" ")[1].split(":")[0]+":"+rs.getString("data_torneo").split(" ")[1].split(":")[1];
+			
+			singleTorneo.add(rs.getString("nome_torneo")); // nome
+			singleTorneo.add(rs.getString("data_torneo").split(" ")[0]); // data	
+			singleTorneo.add(orario); // ORARIO
+			
+			tornei.add(singleTorneo);
+		}
+		
+		
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("tornei", new Gson().toJson(tornei));
+		
+		return new Gson().toJson(jsonObject);
+		
+		
+		
+	}
+	
+	
 	
 }
