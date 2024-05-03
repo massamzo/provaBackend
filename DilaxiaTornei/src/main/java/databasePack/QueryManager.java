@@ -30,6 +30,9 @@ public class QueryManager {
 	private static final String SELECT_IS_INTERNO = "SELECT is_interno FROM tornei WHERE data_torneo = ? AND nome_torneo = ?";
 	private static final String SELECT_PARTECIPANTI = "SELECT email_partecipante FROM partecipazioni WHERE (nome_torneo = ? AND data_torneo = ?)";
 	private static final String SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI = "SELECT nome_torneo, data_torneo FROM tornei as t WHERE data_torneo > NOW() AND EXISTS (SELECT email_partecipante FROM partecipazioni as p WHERE email_partecipante = ? AND p.nome_torneo = t.nome_torneo AND p.data_torneo = t.data_torneo) ORDER BY data_torneo";
+	private static final String SELECT_UTENTI_SEARCH = "SELECT email_utente FROM utenti WHERE privilegi_flg IN ( ?, ?, ?) AND email_utente LIKE ? ORDER BY email_utente LIMIT 10";
+	private static final String SELECT_UTENTI_SEARCH_SPECIFIC = "SELECT email_utente FROM utenti WHERE privilegi_flg IN ( ?, ?) AND email_utente LIKE ? ORDER BY email_utente LIMIT 10";
+	
 	
 	private static final String UPDATE_PASS = "UPDATE utenti SET password = ? WHERE email_utente = ?";
 	//update delle tabelle: partecipazioni, tornei, sports
@@ -72,7 +75,8 @@ public class QueryManager {
 	public static PreparedStatement SELECT_PARTECIPAZIONI_STM;
 	public static PreparedStatement SELECT_PARTECIPANTI_STM;
 	public static PreparedStatement SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI_STM;
-	
+	public static PreparedStatement SELECT_UTENTI_SEARCH_STM;
+	public static PreparedStatement SELECT_UTENTI_SEARCH_SPECIFIC_STM;
 	
 	public QueryManager(Connection conn) throws SQLException {
 		INSERT_USER_STM = conn.prepareStatement(INSERT_USER);
@@ -102,6 +106,9 @@ public class QueryManager {
 		SELECT_PARTECIPAZIONI_STM = conn.prepareStatement(SELECT_PARTECIPAZIONI);
 		SELECT_PARTECIPANTI_STM = conn.prepareStatement(SELECT_PARTECIPANTI);
 		SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI_STM = conn.prepareStatement(SELECT_TORNEI_PARTECIPANTI_NON_SCADUTI);
+		SELECT_UTENTI_SEARCH_STM = conn.prepareStatement(SELECT_UTENTI_SEARCH);
+		SELECT_UTENTI_SEARCH_SPECIFIC_STM = conn.prepareStatement(SELECT_UTENTI_SEARCH_SPECIFIC);
+		
 		
 	}
 }

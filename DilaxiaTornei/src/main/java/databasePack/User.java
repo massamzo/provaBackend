@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.mkammerer.argon2.Argon2;
-import de.mkammerer.argon2.Argon2Factory; 
+import de.mkammerer.argon2.Argon2Factory;
+import tornei.Torneo; 
 
 public class User extends Database{
 	private final String PROF = "avbo.it";
@@ -279,6 +280,49 @@ public class User extends Database{
 		}
 		
 		return eventi;
+	}
+	
+	
+	public ArrayList<String> getUserList(boolean isTorneoInterno, String input) throws SQLException{
+		
+		// preparing the types of people i can invite
+		
+		ResultSet rs;
+		ArrayList<String> peopleCanInvite = new ArrayList<>();
+		if(isTorneoInterno) {
+			
+			QueryManager.SELECT_UTENTI_SEARCH_SPECIFIC_STM.setString(1, this.available_flags.get("prof"));
+			QueryManager.SELECT_UTENTI_SEARCH_SPECIFIC_STM.setString(2, this.available_flags.get("studente"));
+			QueryManager.SELECT_UTENTI_SEARCH_SPECIFIC_STM.setString(3, input+"%");
+			
+			rs = QueryManager.SELECT_UTENTI_SEARCH_SPECIFIC_STM.executeQuery();
+			
+			
+		}else {
+			
+			QueryManager.SELECT_UTENTI_SEARCH_STM.setString(1, this.available_flags.get("prof"));
+			QueryManager.SELECT_UTENTI_SEARCH_STM.setString(2, this.available_flags.get("studente"));
+			QueryManager.SELECT_UTENTI_SEARCH_STM.setString(3, this.available_flags.get("esterno"));
+			QueryManager.SELECT_UTENTI_SEARCH_STM.setString(4, input+"%");
+			
+			rs = QueryManager.SELECT_UTENTI_SEARCH_STM.executeQuery();
+		}
+		
+		
+		
+		
+		
+	
+		
+		ArrayList<String> people = new ArrayList<>();
+		
+		while(rs.next()) {
+			people.add(rs.getString("email_utente"));
+		}
+		
+		
+		return people;
+		
 	}
 	
 	

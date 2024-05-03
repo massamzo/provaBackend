@@ -365,6 +365,19 @@ public class Torneo extends Database{
 	}
 	
 	
+	public boolean canPartecipate(User user) throws Exception {
+		
+		if(this.isInterno && user.getFlag().equals(user.getAvailable_flags().get("esterno"))){
+			
+			throw new Exception("amico non puo partecipare a questo torneo");
+		}else {
+			
+			return true;
+		}
+		
+	}
+	
+	
 	public void update() throws Exception {
 		
 		User userfromDB = getUserKnowingID();

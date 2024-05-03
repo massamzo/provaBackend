@@ -33,6 +33,7 @@ public class Mailer {
 	
 	public Mailer(String reciever, String confirmationLink, boolean isResetPass) {
 		this.reciever = reciever;
+		
 		if(isResetPass) {
 			this.registrationConfirmText = this.resetPassText = "Ciao, \nclicca sul link sotto per resettare la password :\n\n"+confirmationLink;
 			this.subject = "Playsphere reset Password";
