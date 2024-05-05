@@ -15,7 +15,7 @@ public class Mailer {
 	private static final String port = "587";
 	//moxiphjaatlajrrh
 	
-	private static String subject = "PlaySphere mail confirmation";
+	private static String subject = "PlaySphere mail di conferma";
 	
 	private String reciever;
 	private String registrationConfirmText;

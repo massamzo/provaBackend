@@ -69,7 +69,7 @@ public class ConfirmRegistration extends HttpServlet {
 					database.confirmRegistration(utente, otp);
 					
 					// se tutto è andato a buon fine allora reindirizzo sulla pagina di conferma
-					response.sendRedirect(redirect.getCONFIRMATION_PAGE()); 
+					response.sendRedirect(redirect.getTO_CONFIRM_PAGE()+"?notice=Hai completato la registrazione, accedi!"); 
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

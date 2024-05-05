@@ -107,6 +107,9 @@ public class Sessioninfo2 extends HttpServlet {
 					 User user = new User(email, "");
 					 User userLoggato = user.getUserFromdb();
 					 
+					 jsonObject.addProperty("sesso", userLoggato.getSesso());
+					 jsonObject.addProperty("ddn", userLoggato.getDdn().split(" ")[0]);
+					 
 					 ArrayList<String> eventi = userLoggato.getEventiConcessi();
 					 
 					 jsonObject.addProperty("eventi_disponibili", new Gson().toJson(eventi));

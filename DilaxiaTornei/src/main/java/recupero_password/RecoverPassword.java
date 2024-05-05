@@ -78,6 +78,7 @@ public class RecoverPassword extends HttpServlet {
 		String form_passkey = request.getParameter("passkey");
 		String newPass = request.getParameter("newPassword");
 		
+		System.out.println(associated_email);
 		
 		if((form_passkey == null && newPass == null) && associated_email != null) {   // se ha solo inserito la mail per ricevere il link
 			
@@ -90,7 +91,7 @@ public class RecoverPassword extends HttpServlet {
 			
 			// cripto la password
 			
-			String passkey = argon2.hash(10, 63312, 1, temp_passkey);
+			String passkey = temp_passkey;
 			
 			
 			
@@ -117,7 +118,7 @@ public class RecoverPassword extends HttpServlet {
 					
 					// redirect to 
 					
-					response.sendRedirect(redirect.getTO_CONFIRM_PAGE());
+					response.sendRedirect(redirect.getTO_CONFIRM_PAGE()+"?notice=ti abbiamo inviato la mail per modificare la password");
 				
 				}else {
 					throw new SQLException();
@@ -150,7 +151,7 @@ public class RecoverPassword extends HttpServlet {
 				
 				database.removeAllResetRequests();
 				
-				String notice = "PASSWORD aggiornato!";
+				String notice = "PASSWORD aggiornata!";
 				response.sendRedirect(redirect.getRECUPERO_PASS_PAGE()+"?notice="+notice);
 				
 			} catch (SQLException e) {

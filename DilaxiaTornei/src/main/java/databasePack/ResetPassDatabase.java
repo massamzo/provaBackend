@@ -28,9 +28,11 @@ public class ResetPassDatabase extends Database {
 	public void insertPassKey() throws SQLException {
 		String now = DbRegisterLogin.dateTime();
 		
+		Argon2 argon2 = Argon2Factory.create();
+		String hashPass = argon2.hash(10, 63312, 1, passkey);
 		
 		QueryManager.INSERT_TEMP_PASS_STM.setString(1,associated_email);
-		QueryManager.INSERT_TEMP_PASS_STM.setString(2,passkey);
+		QueryManager.INSERT_TEMP_PASS_STM.setString(2,hashPass);
 		QueryManager.INSERT_TEMP_PASS_STM.setString(3,now);
 		
 		QueryManager.INSERT_TEMP_PASS_STM.executeUpdate();
@@ -39,14 +41,20 @@ public class ResetPassDatabase extends Database {
 	
 	public String getAssEmail() throws SQLException {
 		
-		QueryManager.SELECT_TEMP_PASS_STM.setString(1, passkey);
+		Argon2 argon2 = Argon2Factory.create();
+		
+		
 		ResultSet rs = QueryManager.SELECT_TEMP_PASS_STM.executeQuery();
 		
-		if(rs.next()) {
-			return rs.getString("email");
-		}else {
-			throw new SQLException();
+		while(rs.next()) {
+			if(argon2.verify(rs.getString("passkey"), passkey)) {
+				return rs.getString("email");
+			}
 		}
+		
+		
+		throw new SQLException();
+		
 		
 
 	}

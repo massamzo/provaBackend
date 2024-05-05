@@ -2,25 +2,25 @@ package sessions;
 
 public class Redirections {
 
-	private final String HOME_PAGE = "http://192.168.1.115:5500/homepage.html";
-	private final String LOGIN_PAGE = "http://192.168.1.115:5500/login.html";
-	private final String TO_CONFIRM_PAGE = "http://192.168.1.115:5500/toconfirm.html";
-	private final String REGISTRATION_PAGE = "http://192.168.1.115:5500/index.html";
-	private final String CONFIRMATION_PAGE = "http://192.168.1.115:5500/confirm.html";
-	private final String RECUPERO_PASS_PAGE = "http://192.168.1.115:5500/passwordRecover.html";
-	private final String RESET_PASSW_PAGE = "http://192.168.1.115:5500/resetPassword.html";
+	private final String HOME_PAGE = "http://playsphere.ddns.net/home/index.html";
+	private final String LOGIN_PAGE = "http://playsphere.ddns.net/login/index.html";
+	private final String TO_CONFIRM_PAGE = "http://playsphere.ddns.net/email_di_conferma/index.html";
+	private final String REGISTRATION_PAGE = "http://playsphere.ddns.net/reg/index.html";
+	private final String CONFIRMATION_PAGE = "http://playsphere.ddns.net/email_di_conferma/index.html";
+	private final String RECUPERO_PASS_PAGE = "http://playsphere.ddns.net/recupero_password/recupero_password.html";
+	private final String RESET_PASSW_PAGE = "http://playsphere.ddns.net/recupero_password/reset_password.html";
 	
 	public String getRESET_PASSW_PAGE() {
 		return RESET_PASSW_PAGE;
 	}
 
 
-	private final String SESSION_INFO_SERVLET = "http://192.168.1.115:8080/DilaxiaTornei/Sessioninfo";
-	private final String CONFIRM_REGISTRATION_SERVLET = "http://192.168.1.115:8080/DilaxiaTornei/ConfirmRegistration";
-	private final String LOGIN_SERVLET = "http://192.168.1.115:8080/DilaxiaTornei/Login";
+	private final String SESSION_INFO_SERVLET = "http://playsphere.ddns.net:8080/DilaxiaTornei/Sessioninfo";
+	private final String CONFIRM_REGISTRATION_SERVLET = "http://playsphere.ddns.net:8080/DilaxiaTornei/ConfirmRegistration";
+	private final String LOGIN_SERVLET = "http://playsphere.ddns.net:8080/DilaxiaTornei/Login";
 	
 	
-	private final String CORS_ALLOWED = "http://192.168.1.115:5500";
+	private final String CORS_ALLOWED = "http://playsphere.ddns.net";
 
 
 	public String getHOME_PAGE() {

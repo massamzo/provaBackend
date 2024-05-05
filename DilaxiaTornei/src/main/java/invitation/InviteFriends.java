@@ -107,7 +107,7 @@ public class InviteFriends extends HttpServlet {
 					
 					// mail the friend
 					
-					String subject = "Invitazione ad un torneo";
+					String subject = "Invito ad un torneo";
 					String link = redirect.getHOME_PAGE()+"?nome_evento="+actualTorneo.getNome_evento()+"&data_evento="+actualTorneo.getData()+"&orario="+actualTorneo.getOrario();
 					String text = "Ciao "+friend.getNome()+",\nhai ricevuto un invito da "+inviter.getNome()+" "+inviter.getCognome()+".\nclicca sul link per vedere i dettagli del torneo e per partecipare : \n\n"+link;
 				

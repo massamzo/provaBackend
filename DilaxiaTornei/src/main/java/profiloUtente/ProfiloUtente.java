@@ -109,7 +109,7 @@ public class ProfiloUtente extends HttpServlet {
 					
 					//mandare la mail che hai aggiornato la password
 					
-					String subject = "Password aggiornato";
+					String subject = "Password aggiornata";
 					String text = "Ciao "+user.getNome()+", \nla tua password e' stata aggiornata";
 					
 					Mailer mail = new Mailer(user.getEmail(), subject, text, false); // false means it's a normal mail 

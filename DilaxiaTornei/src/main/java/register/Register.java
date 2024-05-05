@@ -109,7 +109,7 @@ public class Register extends HttpServlet {
 			String password = request.getParameter("password");
 			String sesso = request.getParameter("sesso");
 			String ddn = request.getParameter("ddn");
-			
+			System.out.println("sesso : "+sesso);
 			User utente = null;
 			
 			email = email.toLowerCase();
@@ -141,15 +141,15 @@ public class Register extends HttpServlet {
 				if(utente.userExists()) {
 					
 					// restituisco con errore
-					error="Utente esiste!";
-					response.sendRedirect(redirect.getREGISTRATION_PAGE()+"?error="+error); 
+					error="Utente esiste! Scegli un email diversa";
+					response.sendRedirect(redirect.getREGISTRATION_PAGE()+"?error="+error+"&email="+email+"&nome="+nome+"&cognome="+cognome+"&ddn="+ddn); 
 					
 					
 				}else {
 					
 					// salva dati in una tabella temporanea
 					String otp = generateOTP();
-					
+					System.out.println(sesso);
 					database.createTempAccount(utente, otp);
 					
 				
@@ -160,12 +160,12 @@ public class Register extends HttpServlet {
 					if(sent) {
 						//reinderizza sulla pagina di conferma
 						
-						response.sendRedirect(redirect.getTO_CONFIRM_PAGE());  
+						response.sendRedirect(redirect.getTO_CONFIRM_PAGE()+"?notice=Ti abbiamo inviato una mail di conferma");  
 					}else {
 						
 						//reinderizza sulla pagina di registrazione
-						
-						response.sendRedirect(redirect.getREGISTRATION_PAGE());  
+						error="errore nella mail, controlla che sia giusta";
+						response.sendRedirect(redirect.getREGISTRATION_PAGE()+"error="+error);  
 					}
 					
 					
@@ -174,7 +174,7 @@ public class Register extends HttpServlet {
 				// TODO Auto-generated catch block
 				
 				error="Registrazione non è andata a buon fine";
-				response.sendRedirect(redirect.getREGISTRATION_PAGE()+"?error="+error); 
+				response.sendRedirect(redirect.getREGISTRATION_PAGE()+"?error="+error+"&email="+email+"&nome="+nome+"&cognome="+cognome+"&ddn="+ddn); 
 				e.printStackTrace();
 			}
 			

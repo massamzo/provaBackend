@@ -124,10 +124,20 @@ public class TorneiManager extends HttpServlet {
 					User utente = torneo.getUserKnowingID();
 					
 					// utente che crea il torneo si iscrive anche
-					torneo.iscriviAlTorneo(utente.getEmail(), utente.getDdn().split(" ")[0]);
+					try {
+						torneo.iscriviAlTorneo(utente.getEmail(), utente.getDdn().split(" ")[0]);
+						// se tutto ok, allora mando valore esecuzione
+						response.getWriter().append("true");
+					}catch(SQLException e) {
+						String error = e.getMessage();
+						response.getWriter().append(error+" rispetto all'eta minima specificata per il torneo");
+						
+						torneo.delete();
+						e.printStackTrace();
+					}
 					
-					// se tutto ok, allora mando valore esecuzione
-					response.getWriter().append("true");
+					
+					
 					
 				}catch(SQLException e) {
 					
@@ -139,7 +149,14 @@ public class TorneiManager extends HttpServlet {
 				}catch(Exception e) {
 					
 					String error = e.getMessage();
-					response.getWriter().append(error);
+					response.getWriter().append(error+" rispetto all'eta minima specificata per il torneo");
+					
+					try {
+						torneo.delete();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					e.printStackTrace();
 				}
 				

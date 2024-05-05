@@ -15,7 +15,7 @@ public class QueryManager {
 	
 	private static final String SELECT_TEMP_USER = "SELECT email_utente as email, nome, cognome, password, otp, sesso, data_nascita, expire_at FROM temp_utenti WHERE email_utente = ?";
 	private static final String SELECT_USER = "SELECT email_utente as email, nome, cognome, password, sesso, data_nascita, data_creazione FROM utenti WHERE email_utente = ?";
-	private static final String SELECT_TEMP_PASS = "SELECT email_utente as email FROM temp_pass_recover WHERE passkey = ?";
+	private static final String SELECT_TEMP_PASS = "SELECT email_utente as email, passkey FROM temp_pass_recover";
 	//select dalle tabelle: partecipazioni, tornei, sports
 	private static final String SELECT_PARTECIPAZIONI = "SELECT email_partecipante FROM partecipazioni WHERE (email_partecipante=? AND DATE(data_torneo)=?)";
 	private static final String SELECT_TORNEO = "SELECT nome_torneo, data_torneo, descrizione, eta_minima, min_partecipanti, max_partecipanti, is_interno, email_organizzatore, sport, lon, lat FROM tornei WHERE (nome_torneo=? AND data_torneo=?)";
